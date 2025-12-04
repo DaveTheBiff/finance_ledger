@@ -11,12 +11,7 @@ from rich.prompt import Prompt, FloatPrompt, IntPrompt
 # Initialize the console object
 console = Console()
 
-# --- 1. Type Definitions (Strict Type Hinting) ---
-# Using TypedDict to enforce the structure of a transaction dictionary.
-# This makes the code much safer and easier to read!
-
 TransactionType = Literal["income", "expense"]
-
 
 class Transaction(TypedDict):
     """
@@ -30,9 +25,6 @@ class Transaction(TypedDict):
     category: str
     amount: float
     description: str
-
-
-# --- 2. Core Ledger Class ---
 
 
 class PersonalFinanceLedger:
@@ -51,24 +43,22 @@ class PersonalFinanceLedger:
         """Loads transaction data from the JSON file."""
         try:
             with open(self.data_file, "r") as f:
-                # Load the data and ensure it matches the Transaction list type
                 self.transactions = json.load(f)
             console.print(
                 f"[green]Data loaded successfully from {self.data_file}.[/green]"
             )
         except FileNotFoundError:
-            # If file doesn't exist, start with an empty list
             self.transactions = []
             console.print("[yellow]Starting with a fresh, empty ledger.[/yellow]")
         except json.JSONDecodeError:
-            # Handle corrupted or empty JSON file
+            # For error/empty JSON files
             console.print(
                 "[bold red]Error loading data: JSON file is corrupted or empty. Starting new ledger.[/bold red]"
             )
             self.transactions = []
 
     def _save_transactions(self) -> None:
-        """Saves current transactions to the JSON file."""
+        """ Saves current transactions to JSON file. """
         try:
             with open(self.data_file, "w") as f:
                 # Use indent=4 to make the exported file human-readable
@@ -79,7 +69,7 @@ class PersonalFinanceLedger:
     def add_transaction(
         self, tx_type: TransactionType, category: str, amount: float, description: str
     ) -> None:
-        """Adds a new transaction dictionary to the list."""
+        """Adds new transaction dictionary to the list."""
         new_transaction: Transaction = {
             "id": self._next_id,
             "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -96,9 +86,8 @@ class PersonalFinanceLedger:
         )
 
     def delete_transaction(self, tx_id: int) -> bool:
-        """Deletes a transaction by its ID."""
+        """ Deletes a transaction by its ID. """
         initial_count = len(self.transactions)
-        # Filter out the transaction with the given ID
         self.transactions = [t for t in self.transactions if t["id"] != tx_id]
 
         if len(self.transactions) < initial_count:
@@ -137,7 +126,7 @@ class PersonalFinanceLedger:
         return summary
 
     def export_data(self, filename: str) -> None:
-        """Exports all data to a specified JSON file."""
+        """Exports all data to a user-named JSON file"""
         try:
             with open(filename, "w") as f:
                 json.dump(self.transactions, f, indent=4)
@@ -172,9 +161,6 @@ class PersonalFinanceLedger:
             console.print(
                 f"[bold red]Error importing data: {e}. File format may be invalid.[/bold red]"
             )
-
-
-# --- 3. CLI Interaction Functions ---
 
 
 def display_transactions(
@@ -230,7 +216,6 @@ def handle_add(ledger: PersonalFinanceLedger) -> None:
         )
         return
 
-    # Call the core ledger logic
     ledger.add_transaction(tx_type, category, amount, description)
 
 
@@ -293,7 +278,7 @@ def handle_balance(ledger: PersonalFinanceLedger) -> None:
 
 
 def handle_delete(ledger: PersonalFinanceLedger) -> None:
-    """Prompts for an ID to delete a transaction."""
+    """Prompts for an ID to delete a transaction"""
     tx_id = IntPrompt.ask(
         "Enter the [bold red]ID[/bold red] of the transaction to delete"
     )
@@ -301,25 +286,22 @@ def handle_delete(ledger: PersonalFinanceLedger) -> None:
 
 
 def handle_export(ledger: PersonalFinanceLedger) -> None:
-    """Handles the export command."""
+    """Handles export command"""
     filename = Prompt.ask("Enter the filename to export to", default="export.json")
     ledger.export_data(filename)
 
 
 def handle_import(ledger: PersonalFinanceLedger) -> None:
-    """Handles the import command."""
+    """Handles import command"""
     filename = Prompt.ask("Enter the filename to import from")
     ledger.import_data(filename)
-
-
-# --- 4. Main Application Loop ---
 
 
 def run_cli() -> None:
     """The main entry point for the Command Line Interface."""
     console.print(
         Panel(
-            "[bold cyan]💰 Personal Finance Ledger[/bold cyan]\n"
+            "[bold cyan]Personal Finance Ledger[/bold cyan]\n"
             "Welcome! Type 'help' to see commands.",
             title="Welcome",
             border_style="yellow",
@@ -351,7 +333,6 @@ def run_cli() -> None:
     display_help()  # Show help at startup
 
     while True:
-        # Simple, non-niche way to get user input for the command
         user_input: str = (
             Prompt.ask("[bold green]Ledger[/bold green] >").lower().strip()
         )
@@ -374,7 +355,4 @@ def run_cli() -> None:
 
 
 if __name__ == "__main__":
-    # This structure is simple and easy to run directly.
-    # To follow the provided README command, this file would typically be renamed
-    # to 'cli.py' and placed inside a 'finance_ledger' directory.
     run_cli()
