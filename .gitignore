@@ -1,0 +1,29 @@
+Byte-compiled / optimized / DLL files
+
+pycache/
+*.pyc
+*.pyd
+*.pyo
+
+Editor backups
+
+*~
+
+Logs and temp data
+
+*.log
+*.tmp
+
+Virtual environments
+
+.venv/
+env/
+
+OS generated files
+
+.DS_Store
+Thumbs.db
+
+Data file (if we export it)
+
+ledger_data.json
