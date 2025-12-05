@@ -35,3 +35,7 @@ python ledger.py
     export: Export data to JSON
     import: Import data from JSON
     delete: Delete a transaction
+
+
+What I have learnt so far:
+https://docs.google.com/document/d/1M742g_wlyE8rCdazKVqLgDe6Qxmo0WxLuBPzsVJD-0A/edit?usp=sharing
